@@ -1,2 +1,10 @@
-# cliente-api
+# API CLIENTE
+
 Projeto apresentado à Builders
+
+
+COMO FAZER PARA RODAR VIA DOCKER
+
+COMO REBUILDAR LOCALMENTE
+
+USO DA API
