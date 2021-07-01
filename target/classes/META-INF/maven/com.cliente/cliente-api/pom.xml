@@ -17,7 +17,9 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<dockerfile-maven-version>1.4.13</dockerfile-maven-version>
+	<!-- 	<modelmapper.version>2.3.0</modelmapper.version> -->
+<!-- 		<squiggly.version>1.3.18</squiggly.version>
+ -->		<dockerfile-maven-version>1.4.13</dockerfile-maven-version>
 	</properties>
 
 	<dependencies>
@@ -65,12 +67,6 @@
 
 
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
@@ -91,11 +87,13 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
+		
+<!-- 		<dependency>
+			<groupId>com.github.bohnman</groupId>
+			<artifactId>squiggly-filter-jackson</artifactId>
+			<version>${squiggly.version}</version>
 		</dependency>
-
+ -->
 	</dependencies>
 
 	<build>

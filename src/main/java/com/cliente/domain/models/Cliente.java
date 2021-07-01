@@ -1,7 +1,7 @@
 package com.cliente.domain.models;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +20,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Entity
+@Entity(name =  "clientes")
 public class Cliente {
 	
 	@EqualsAndHashCode.Include
@@ -44,10 +44,12 @@ public class Cliente {
     @Column(nullable = false, columnDefinition = "datetime")
     private LocalDate dataNascimento;
     
+    
 	@CreationTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
-	private LocalDateTime dataCadastro;    
-    
+//	private LocalDateTime dataCadastro;    
+	private OffsetDateTime dataCadastro;
+	
     @NotNull
     private boolean ativo = true;
     

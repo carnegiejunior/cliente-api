@@ -1,6 +1,6 @@
 package com.cliente.api.exceptionhandlers;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,8 +13,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,13 +43,29 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	private MessageSource messageSource;
 	
 	@Override
+	protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		return ResponseEntity.status(status).headers(headers).build();
+	}
+	
+	@Override
+	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status,
+			WebRequest request) {
+		
+		return handleValidationInternal(ex, headers, status, request, ex.getBindingResult());
+	}
+	
+	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-	    ProblemType problemType = ProblemType.DADOS_INVALIDOS;
+	    return handleValidationInternal(ex, headers, status, request, ex.getBindingResult());
+	}
+
+	private ResponseEntity<Object> handleValidationInternal(Exception ex, HttpHeaders headers,
+			HttpStatus status, WebRequest request, BindingResult bindingResult) {
+		ProblemType problemType = ProblemType.DADOS_INVALIDOS;
 	    String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
-	    
-	    BindingResult bindingResult = ex.getBindingResult();
 	    
 	    List<Problem.Object> problemObjects = bindingResult.getAllErrors().stream()
 	    		.map(objectError -> {
@@ -236,14 +254,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		
 		if (body == null) {
 			body = Problem.builder()
-				.timestamp(LocalDateTime.now())
+				.timestamp(OffsetDateTime.now())
 				.title(status.getReasonPhrase())
 				.status(status.value())
 				.userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
 				.build();
 		} else if (body instanceof String) {
 			body = Problem.builder()
-				.timestamp(LocalDateTime.now())
+				.timestamp(OffsetDateTime.now())
 				.title((String) body)
 				.status(status.value())
 				.userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
@@ -257,7 +275,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 			ProblemType problemType, String detail) {
 		
 		return Problem.builder()
-			.timestamp(LocalDateTime.now())
+			.timestamp(OffsetDateTime.now())
 			.status(status.value())
 			.type(problemType.getUri())
 			.title(problemType.getTitle())
